@@ -31,4 +31,37 @@ const getAllUsers=async(req,res)=>{
         res.status(500).json({ message: 'Error fetching users', error });
     }
 };
-module.exports={createuser,getAllUsers};
+
+const getUserById=async(req,res)=>{
+    try {
+        const userid=req.params.id;
+        const user=await User.findById(userid);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error });
+    }
+};
+
+const updateUser=async(req,res)=>{
+    try {
+        const userid=req.params.id;
+        const updatedData=req.body;
+        const updatedUser=await User.findByIdAndUpdate(userid,updatedData,{new:true});
+        res.status(200).json(updatedUser);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error updating user', error });
+    }
+};
+const deleteUser=async(req,res)=>{
+    try {
+        const userid=req.params.id;
+        const deletedUser=await User.findByIdAndDelete(userid);
+        res.status(200).json(deletedUser);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error deleting user', error });
+    }
+};
+
+module.exports={createuser,getAllUsers,getUserById,updateUser,deleteUser};
