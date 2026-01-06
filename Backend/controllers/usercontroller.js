@@ -1,67 +1,80 @@
-const User = require('../models/User');   // model import
-// Create a new user
+const User=require('../models/User');
+const bcrytjs=require('bcryptjs');
 
-
-
-const createuser=async(req,res)=>{
+const createUser=async(req,res)=>{
     try {
-        const { name, email, password, address, phone } = req.body;    // getting data from user or frontend 
+        const {name,email,password}=req.body;
 
-        const newUser = new User({     // creating new user object
+
+        const hashedPassword=await bcrytjs.hash(password,10);
+
+        const newUser=new User({
             name,
             email,
-            password,
-            address,
-            phone
-        });
-        const savedUser = await newUser.save();  // saving user to database
-        res.status(201).json(savedUser);   // sending response back to frontend
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating user', error });
-    }
-};
+            password:hashedPassword
+        });     
 
-
-// Get all users
-const getAllUsers=async(req,res)=>{
-    try {
-        const users = await User.find();   // fetching all users from database
-        res.status(200).json(users);       // sending users data as response
+        const savedUser=await newUser.save();
+        res.status(201).json(savedUser);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching users', error });
-    }
+        res.status(500).json({message:'Error creating user',error:error.message});
+    }   
 };
 
 const getUserById=async(req,res)=>{
     try {
-        const userid=req.params.id;
-        const user=await User.findById(userid);
+        const userId=req.params.id; 
+
+        const user=await User.findById(userId);
+        
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching users', error });
-    }
+        res.status(500).json({message:'Error fetching user',error:error.message});
+    }   
+};
+
+const getallUsers=async(req,res)=>{
+    try {
+        const users=await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({message:'Error fetching users',error:error.message});
+    }   
 };
 
 const updateUser=async(req,res)=>{
     try {
-        const userid=req.params.id;
-        const updatedData=req.body;
-        const updatedUser=await User.findByIdAndUpdate(userid,updatedData,{new:true});
-        res.status(200).json(updatedUser);
+        const userId=req.params.id;
+        const {name,email,password}=req.body;
+        const hashedPassword=await bcrytjs.hash(password,10);
+
+        const updatedUser=await User.findByIdAndUpdate( userId,
+            {
+                name,
+                email,
+                password:hashedPassword
+            },
+            {new:true}
+        );
+        res.status(200).json(updatedUser);  
+    } catch (error) {
+        res.status(500).json({message:'Error updating user',error:error.message});
     }
-    catch (error) {
-        res.status(500).json({ message: 'Error updating user', error });
-    }
+
 };
 const deleteUser=async(req,res)=>{
     try {
-        const userid=req.params.id;
-        const deletedUser=await User.findByIdAndDelete(userid);
-        res.status(200).json(deletedUser);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Error deleting user', error });
-    }
+        const userId=req.params.id;
+       const deletedUser= await User.findByIdAndDelete(userId);
+         res.status(200).json(deletedUser);
+    } catch (error) {
+        res.status(500).json({message:'Error deleting user',error:error.message});
+    }   
 };
-
-module.exports={createuser,getAllUsers,getUserById,updateUser,deleteUser};
+module.exports={
+    createUser,
+    getUserById,
+    getallUsers,
+    updateUser,
+    deleteUser
+};
