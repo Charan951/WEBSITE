@@ -4,7 +4,7 @@ const app = express();
 const dotenv = require('dotenv');  // iport dotenv package
 dotenv.config();                  // connection to the dotenv file
 const connectToDatabase = require('./config/db');
-const userRoutes = require('./routes/userroutes'); // import user routes
+const authRoutes = require('./routes/authroutes');
 
 // Connect to the database
 connectToDatabase();
@@ -19,12 +19,14 @@ app.get('/', (req, res) => {
 app.get('/charan',(req,res)=>{
     res.send('Hello Charan hi  ');
 });
-app.use('/api/users', userRoutes); // Use user routes
+
 
 const name=process.env.Name;  // getting Name from the dotenv file
 app.get('/name',(req,res)=>{
     res.send(`Hello ${name} welcome to the backend`);
 });
+
+app.use('/api/auth', authRoutes);  // Use authentication routes
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
