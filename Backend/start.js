@@ -13,7 +13,20 @@ app.use(express.json());  // Middleware to parse JSON request bodies
 
 const PORT = process.env.Port || 3000;   // getting port from the dotenv file
 
-app.get('/', (req, res) => {
+app.use((req, res, next) => {
+    if(10>5)    
+        {
+            next();
+        }
+    });
+
+firsthandler=(req,res,next)=>{
+    if(5>2){
+        next(); 
+    }
+}
+
+app.get('/',firsthandler, (req, res) => {
     res.send('Hello from the Backend!');
 });
 app.get('/charan',(req,res)=>{
