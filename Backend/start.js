@@ -5,6 +5,7 @@ const dotenv = require('dotenv');  // iport dotenv package
 dotenv.config();                  // connection to the dotenv file
 const connectToDatabase = require('./config/db');
 const authRoutes = require('./routes/authroutes');
+const userRoutes = require('./routes/userroutes');
 
 // Connect to the database
 connectToDatabase();
@@ -13,20 +14,9 @@ app.use(express.json());  // Middleware to parse JSON request bodies
 
 const PORT = process.env.Port || 3000;   // getting port from the dotenv file
 
-app.use((req, res, next) => {
-    if(10>5)    
-        {
-            next();
-        }
-    });
 
-firsthandler=(req,res,next)=>{
-    if(5>2){
-        next(); 
-    }
-}
 
-app.get('/',firsthandler, (req, res) => {
+app.get('/', (req, res) => {
     res.send('Hello from the Backend!');
 });
 app.get('/charan',(req,res)=>{
@@ -40,6 +30,7 @@ app.get('/name',(req,res)=>{
 });
 
 app.use('/api/auth', authRoutes);  // Use authentication routes
+app.use('/api/users', userRoutes);  // Use user routes
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
